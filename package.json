@@ -1,0 +1,14 @@
+{
+  "name": "toolbox",
+  "version": "1.0.0",
+  "description": "Maxime Jimenez's personal toolbox",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maximejimenez/toolbox.git"
+  },
+  "author": "Maxime Jimenez",
+  "homepage": "https://github.com/maximejimenez/toolbox#readme"
+}
