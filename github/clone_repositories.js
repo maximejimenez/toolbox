@@ -112,8 +112,8 @@ async function cloneRepositories(token, destination) {
       statusBar.update(j + 1);
     }
 
-    logger.info(`Organization "${organization}" cloned successfully ✅`);
     statusBar.stop();
+    logger.info(`Organization "${organization}" cloned successfully ✅`);
   }
 }
 
