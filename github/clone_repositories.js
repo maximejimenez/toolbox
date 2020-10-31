@@ -61,7 +61,7 @@ async function cloneRepositories(token, destination) {
     {
       type: 'checkbox',
       message:
-        'Please select organizations to clone (Space to select, Enter to validate)',
+        'Please select organizations to clone (<Space> to select, <Enter> to validate)',
       name: 'organizations',
       choices: [login, ...organizations.map((org) => org.login)],
     },
@@ -112,6 +112,7 @@ async function cloneRepositories(token, destination) {
       statusBar.update(j + 1);
     }
 
+    logger.info(`Organization "${organization}" cloned successfully ✅`);
     statusBar.stop();
   }
 }
@@ -133,6 +134,8 @@ if (require.main === module) {
   const { destination, token } = program;
 
   cloneRepositories(token, destination)
-    .then(() => logger.info('Repositories cloned !'))
+    .then(() =>
+      logger.info('All selected repositories have been cloned successfully ✅'),
+    )
     .catch(logger.error);
 }
