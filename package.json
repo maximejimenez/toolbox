@@ -2,13 +2,34 @@
   "name": "toolbox",
   "version": "1.0.0",
   "description": "Maxime Jimenez's personal toolbox",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/maximejimenez/toolbox.git"
   },
   "author": "Maxime Jimenez",
-  "homepage": "https://github.com/maximejimenez/toolbox#readme"
+  "homepage": "https://github.com/maximejimenez/toolbox#readme",
+  "scripts": {
+    "eslint": "eslint .",
+    "lint": "npm run prettier && npm run eslint",
+    "prettier": "prettier -l './**/*.{js,ts,yml,yaml,json,md}'"
+  },
+  "dependencies": {
+    "@octokit/rest": "18.0.6",
+    "cli-progress": "^3.8.2",
+    "commander": "6.2.0",
+    "inquirer": "7.3.3",
+    "mkdirp": "^1.0.4",
+    "simple-git": "^2.21.0",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "eslint": "6.8.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-config-node": "4.1.0",
+    "eslint-config-prettier": "6.15.0",
+    "eslint-plugin-node": "11.1.0",
+    "eslint-plugin-prettier": "3.1.4",
+    "prettier": "2.1.2"
+  }
 }
