@@ -19,11 +19,11 @@ chsh -s $(which zsh)
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 
 # Backup zshrc that was created
-mv ~/zshrc ~/zshrc.init.old
+mv ~/.zshrc ~/.zshrc.init.old
 
 # Copy my .zshrc and custom commands
-cp ./custom-commands ~/custom-commands
-cp ./zshrc ~/zshrc
+cp ./.custom-commands ~/.custom-commands
+cp ./.zshrc ~/.zshrc
 
 # Install nvm 
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.36.0/install.sh | zsh
