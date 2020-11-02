@@ -1,0 +1,4 @@
+# Kill process using port: kill-port <PORT>
+kill-port() {
+	kill -9 $(lsof -ti tcp:"$1")
+}

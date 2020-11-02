@@ -1,0 +1,33 @@
+# Add taps to brew
+
+tap "homebrew/bundle"
+tap "homebrew/cask"
+tap "homebrew/core"
+
+# Set arguments for all "brew cask install" commands
+
+cask_args appdir: "~/Applications"
+
+# Install Formulaes
+
+brew "coreutils"
+brew "dive"
+brew "docker"
+brew "htop"
+brew "jq"
+brew "tmux"
+brew "vim"
+brew "yarn"
+brew "zsh"
+
+# Install Casks
+
+cask "1password"
+cask "google-chrome"
+cask "gitkraken"
+cask "iterm2"
+cask "postman"
+cask "robo-3t"
+cask "spotify"
+cask "slack"
+cask "visual-studio-code"
