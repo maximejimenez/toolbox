@@ -31,6 +31,13 @@ const REPOSITORY_TYPE = {
   OWNER: 'owner',
 };
 
+const SORT_TYPE = {
+  CREATED: 'created',
+  UPDATED: 'updated',
+  PUSHED: 'pushed',
+  FULL_NAME: 'full_name',
+};
+
 async function cloneRepository(repo, destination) {
   const { fullName, sshUrl } = repo;
   const repositoryPath = path.resolve(destination, fullName);
@@ -48,7 +55,7 @@ async function cloneRepositories(token, destination) {
 
   const octokit = new Octokit({
     // Token generation : https://github.com/settings/tokens/new
-    // Permissions : [read:org]
+    // Permissions : [read:org], [repo]
     auth: token,
   });
 
@@ -71,33 +78,55 @@ async function cloneRepositories(token, destination) {
     questions,
   );
 
-  logger.info('Cloning the following organizations');
-  logger.info(organizationsToClone);
-
   for (let i = 0; i < organizationsToClone.length; i += 1) {
     const organization = organizationsToClone[i];
+    logger.info(`Cloning organization "${organization}"`);
 
     let data;
+    let headers;
+    let page = 1;
+    const repositories = [];
 
-    if (organization === login) {
-      // User's own repositories
-      ({ data } = await octokit.repos.listForAuthenticatedUser({
-        type: REPOSITORY_TYPE.OWNER,
-      }));
-      logger.info(`Cloning user "${login}"`);
-    } else {
-      // User's organizations repositories
-      ({ data } = await octokit.repos.listForOrg({
-        org: organization,
-      }));
-      logger.info(`Cloning organization "${organization}"`);
+    while (page) {
+      if (organization === login) {
+        // User's own repositories
+        ({ data, headers } = await octokit.repos.listForAuthenticatedUser({
+          type: REPOSITORY_TYPE.OWNER,
+          sort: SORT_TYPE.FULL_NAME,
+          page,
+          per_page: 100,
+        }));
+        logger.info(`Cloning user "${login}"`);
+      } else {
+        // User's organizations repositories
+        ({ data, headers } = await octokit.repos.listForOrg({
+          org: organization,
+          sort: SORT_TYPE.FULL_NAME,
+          page,
+          per_page: 100,
+        }));
+      }
+
+      if (headers.link) {
+        const regex = /.*\/repos\?sort=full_name&page=([0-9]+)&per_page=100>; rel="next",.*/;
+        const result = headers.link.match(regex);
+        if (result) {
+          [, page] = result;
+        } else {
+          page = null;
+        }
+      } else {
+        page = null;
+      }
+
+      repositories.push(
+        ...data.map((repo) => ({
+          name: repo.name,
+          fullName: repo.full_name,
+          sshUrl: repo.ssh_url,
+        })),
+      );
     }
-
-    const repositories = data.map((repo) => ({
-      name: repo.name,
-      fullName: repo.full_name,
-      sshUrl: repo.ssh_url,
-    }));
 
     const statusBar = new cliProgress.SingleBar(
       {},
