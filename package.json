@@ -20,6 +20,7 @@
     "commander": "6.2.0",
     "inquirer": "7.3.3",
     "mkdirp": "^1.0.4",
+    "newman": "^5.2.1",
     "simple-git": "^2.21.0",
     "winston": "^3.3.3"
   },
