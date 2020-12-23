@@ -41,11 +41,19 @@ const SORT_TYPE = {
 };
 
 async function cloneRepository(repo, destination) {
-  const { fullName, sshUrl } = repo;
-  const repositoryPath = path.resolve(destination, fullName);
+  try {
+    const { fullName, sshUrl } = repo;
+    const repositoryPath = path.resolve(destination, fullName);
 
-  await mkdirp(repositoryPath);
-  await git.clone(sshUrl, repositoryPath);
+    await mkdirp(repositoryPath);
+    await git.clone(sshUrl, repositoryPath);
+  } catch (err) {
+    if (/already exists and is not an empty directory./.test(err.message)) {
+      // This repository must have been already cloned
+      return;
+    }
+    throw err;
+  }
 }
 
 async function cloneRepositories(token, destination) {
