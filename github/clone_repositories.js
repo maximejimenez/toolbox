@@ -14,8 +14,10 @@ const { Octokit } = require('@octokit/rest');
 
 const logger = winston.createLogger({
   level: 'info',
-  format: winston.format.json(),
-  defaultMeta: { service: 'user-service' },
+  format: winston.format.combine(
+    winston.format.errors({ stack: true }),
+    winston.format.json(),
+  ),
   transports: [
     new winston.transports.Console({
       format: winston.format.simple(),
