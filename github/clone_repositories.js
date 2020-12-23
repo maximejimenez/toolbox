@@ -120,11 +120,13 @@ async function cloneRepositories(token, destination) {
       }
 
       repositories.push(
-        ...data.map((repo) => ({
-          name: repo.name,
-          fullName: repo.full_name,
-          sshUrl: repo.ssh_url,
-        })),
+        ...data
+          .filter((repo) => !repo.archived)
+          .map((repo) => ({
+            name: repo.name,
+            fullName: repo.full_name,
+            sshUrl: repo.ssh_url,
+          })),
       );
     }
 
