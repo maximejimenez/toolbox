@@ -56,6 +56,13 @@ async function cloneRepository(repo, destination) {
   }
 }
 
+function validateOrganizationsToClone(input) {
+  if (input.length === 0) {
+    return 'No organization(s) selected, please select one to clone repositories.';
+  }
+  return true;
+}
+
 async function cloneRepositories(token, destination) {
   if (!fs.existsSync(destination) || !fs.lstatSync(destination).isDirectory()) {
     throw new Error(
@@ -81,6 +88,7 @@ async function cloneRepositories(token, destination) {
         'Please select organizations to clone (<Space> to select, <Enter> to validate)',
       name: 'organizations',
       choices: [login, ...organizations.map((org) => org.login)],
+      validate: validateOrganizationsToClone,
     },
   ];
 
