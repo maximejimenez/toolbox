@@ -6,8 +6,8 @@ const program = require('commander');
 const fs = require('fs');
 const path = require('path');
 const Piscina = require('piscina');
-const getStatusBar = require('./helpers/getStatusBar');
-const getLogger = require('./helpers/getLogger');
+const getStatusBar = require('./utils/getStatusBar');
+const getLogger = require('./utils/getLogger');
 
 const pull = new Piscina({
   filename: require.resolve('./git/pull.js'),
@@ -32,7 +32,7 @@ async function pullRepositories(target) {
     .map((dirent) => dirent.name);
 
   const failures = [];
-  const pooledWorkers = [];
+  const threads = [];
 
   const statusBar = getStatusBar(repositories.length);
 
@@ -41,7 +41,7 @@ async function pullRepositories(target) {
   for (let j = 0; j < repositories.length; j += 1) {
     const repository = repositories[j];
 
-    const promise = pull
+    const thread = pull
       .run({ target, repository })
       .then(({ success, error }) => {
         statusBar.update();
@@ -51,10 +51,10 @@ async function pullRepositories(target) {
         }
       });
 
-    pooledWorkers.push(promise);
+    threads.push(thread);
   }
 
-  await Promise.all(pooledWorkers);
+  await Promise.all(threads);
 
   statusBar.stop();
 
@@ -90,6 +90,6 @@ if (require.main === module) {
     .catch((error) => {
       logger.error(error);
 
-      process.exit(0);
+      process.exit(1);
     });
 }
