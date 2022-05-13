@@ -2,30 +2,19 @@
 
 // Usage: node github/clone_repositories.js --token myToken --destination /my/destination
 
-const cliProgress = require('cli-progress');
 const program = require('commander');
 const fs = require('fs');
 const inquirer = require('inquirer');
-const mkdirp = require('mkdirp');
-const path = require('path');
-const simpleGit = require('simple-git');
-const winston = require('winston');
 const { Octokit } = require('@octokit/rest');
+const Piscina = require('piscina');
+const getStatusBar = require('../utils/getStatusBar');
+const getLogger = require('../utils/getLogger');
 
-const logger = winston.createLogger({
-  level: 'info',
-  format: winston.format.combine(
-    winston.format.errors({ stack: true }),
-    winston.format.json(),
-  ),
-  transports: [
-    new winston.transports.Console({
-      format: winston.format.simple(),
-    }),
-  ],
+const logger = getLogger();
+
+const clone = new Piscina({
+  filename: require.resolve('./git/clone.js'),
 });
-
-const git = simpleGit();
 
 const REPOSITORY_TYPE = {
   ALL: 'all',
@@ -39,22 +28,6 @@ const SORT_TYPE = {
   PUSHED: 'pushed',
   FULL_NAME: 'full_name',
 };
-
-async function cloneRepository(repo, destination) {
-  try {
-    const { fullName, sshUrl } = repo;
-    const repositoryPath = path.resolve(destination, fullName);
-
-    await mkdirp(repositoryPath);
-    await git.clone(sshUrl, repositoryPath);
-  } catch (err) {
-    if (/already exists and is not an empty directory./.test(err.message)) {
-      // This repository must have been already cloned
-      return;
-    }
-    throw err;
-  }
-}
 
 function validateOrganizationsToClone(input) {
   if (input.length === 0) {
@@ -96,8 +69,11 @@ async function cloneRepositories(token, destination) {
     questions,
   );
 
+  const failures = [];
+
   for (let i = 0; i < organizationsToClone.length; i += 1) {
     const organization = organizationsToClone[i];
+
     logger.info(`Cloning organization "${organization}"`);
 
     let data;
@@ -114,6 +90,7 @@ async function cloneRepositories(token, destination) {
           page,
           per_page: 100,
         }));
+
         logger.info(`Cloning user "${login}"`);
       } else {
         // User's organizations repositories
@@ -148,22 +125,33 @@ async function cloneRepositories(token, destination) {
       );
     }
 
-    const statusBar = new cliProgress.SingleBar(
-      {},
-      cliProgress.Presets.shades_classic,
-    );
+    const threads = [];
 
-    statusBar.start(repositories.length, 0);
+    const statusBar = getStatusBar(repositories.length);
+
+    statusBar.start();
 
     for (let j = 0; j < repositories.length; j += 1) {
       const repository = repositories[j];
-      await cloneRepository(repository, destination);
-      statusBar.update(j + 1);
+
+      const thread = clone
+        .run({ repository, destination })
+        .catch((error) => {
+          failures.push(`${repository}: (${error.message.replace(/\n$/, '')})`);
+        })
+        .finally(() => {
+          statusBar.update();
+        });
+
+      threads.push(thread);
     }
 
+    await Promise.all(threads);
+
     statusBar.stop();
-    logger.info(`Organization "${organization}" cloned successfully ✅`);
   }
+
+  return failures;
 }
 
 if (require.main === module) {
@@ -183,8 +171,20 @@ if (require.main === module) {
   const { destination, token } = program;
 
   cloneRepositories(token, destination)
-    .then(() =>
-      logger.info('All selected repositories have been cloned successfully ✅'),
-    )
-    .catch(logger.error);
+    .then((failures) => {
+      logger.info('All selected repositories have been cloned successfully ✅');
+
+      if (failures.length > 0) {
+        logger.warn('Except the following:');
+
+        failures.forEach((failure) => {
+          logger.warn(`- ${failure}`);
+        });
+      }
+    })
+    .catch((error) => {
+      logger.error(error);
+
+      process.exit(1);
+    });
 }
