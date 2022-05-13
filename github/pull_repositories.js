@@ -6,8 +6,8 @@ const program = require('commander');
 const fs = require('fs');
 const path = require('path');
 const Piscina = require('piscina');
-const getStatusBar = require('./utils/getStatusBar');
-const getLogger = require('./utils/getLogger');
+const getStatusBar = require('../utils/getStatusBar');
+const getLogger = require('../utils/getLogger');
 
 const pull = new Piscina({
   filename: require.resolve('./git/pull.js'),

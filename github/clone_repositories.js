@@ -7,8 +7,8 @@ const fs = require('fs');
 const inquirer = require('inquirer');
 const { Octokit } = require('@octokit/rest');
 const Piscina = require('piscina');
-const getLogger = require('./utils/getLogger');
-const getStatusBar = require('./utils/getStatusBar');
+const getStatusBar = require('../utils/getStatusBar');
+const getLogger = require('../utils/getLogger');
 
 const logger = getLogger();
 
