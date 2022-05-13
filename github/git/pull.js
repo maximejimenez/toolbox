@@ -7,7 +7,7 @@ const MAIN = 'main';
 
 const git = simpleGit();
 
-module.exports = async function pull({ target, repository }) {
+async function pull({ target, repository }) {
   const repositoryPath = path.resolve(target, repository);
 
   try {
@@ -46,4 +46,6 @@ module.exports = async function pull({ target, repository }) {
       error: repository,
     };
   }
-};
+}
+
+module.exports = pull;

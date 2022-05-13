@@ -4,7 +4,7 @@ const mkdirp = require('mkdirp');
 
 const git = simpleGit();
 
-module.exports = async function close({ destination, repository }) {
+async function clone({ destination, repository }) {
   try {
     const { fullName, sshUrl } = repository;
     const repositoryPath = path.resolve(destination, fullName);
@@ -21,4 +21,6 @@ module.exports = async function close({ destination, repository }) {
       error: `${repository}: ${error.message}`,
     };
   }
-};
+}
+
+module.exports = clone;
