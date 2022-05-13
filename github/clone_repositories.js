@@ -136,12 +136,11 @@ async function cloneRepositories(token, destination) {
 
       const thread = clone
         .run({ repository, destination })
-        .then(({ success, error }) => {
+        .catch((error) => {
+          failures.push(`${repository}: (${error.message.replace(/\n$/, '')})`);
+        })
+        .finally(() => {
           statusBar.update();
-
-          if (!success) {
-            failures.push(error);
-          }
         });
 
       threads.push(thread);

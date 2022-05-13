@@ -43,12 +43,11 @@ async function pullRepositories(target) {
 
     const thread = pull
       .run({ target, repository })
-      .then(({ success, error }) => {
+      .catch((error) => {
+        failures.push(`${repository}: (${error.message.replace(/\n$/, '')})`);
+      })
+      .finally(() => {
         statusBar.update();
-
-        if (!success) {
-          failures.push(error);
-        }
       });
 
     threads.push(thread);
