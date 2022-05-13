@@ -129,7 +129,7 @@ async function cloneRepositories(token, destination) {
 
     const statusBar = getStatusBar(repositories.length);
 
-    statusBar.start(repositories.length, 0);
+    statusBar.start();
 
     for (let j = 0; j < repositories.length; j += 1) {
       const repository = repositories[j];
