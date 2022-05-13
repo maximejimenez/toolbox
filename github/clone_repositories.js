@@ -175,10 +175,10 @@ if (require.main === module) {
       logger.info('All selected repositories have been cloned successfully ✅');
 
       if (failures.length > 0) {
-        logger.info('Except the following:');
+        logger.warn('Except the following:');
 
         failures.forEach((failure) => {
-          logger.info(`- ${failure}`);
+          logger.warn(`- ${failure}`);
         });
       }
     })

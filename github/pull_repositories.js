@@ -79,10 +79,10 @@ if (require.main === module) {
       logger.info('Repositories have been updated successfully ✅');
 
       if (failures.length > 0) {
-        logger.info('Except the following:');
+        logger.warn('Except the following:');
 
         failures.forEach((failure) => {
-          logger.info(`- ${failure}`);
+          logger.warn(`- ${failure}`);
         });
       }
     })
