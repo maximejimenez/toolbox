@@ -14,12 +14,13 @@ const findDefaultOriginAndBranch = async () => {
     '--short',
     'refs/remotes/origin/HEAD',
   );
-  const originAndBranch = gitSymbolicCmd.trim().split('/');
 
-  return {
-    origin: originAndBranch[0] ?? DEFAULT_ORIGIN,
-    branch: originAndBranch[1] ?? DEFAULT_BRANCH,
-  };
+  const [
+    origin = DEFAULT_ORIGIN,
+    branch = DEFAULT_BRANCH,
+  ] = gitSymbolicCmd.trim().split('/');
+
+  return { origin, branch };
 };
 
 async function pull({ target, repository }) {
