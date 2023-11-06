@@ -18,7 +18,7 @@ My personnal toolbox
     > node github/clone_repositories.js --token <TOKEN> --destination <PATH>
   ```
 
-- Pull all repositories from origin/default-branch (e.g. origin/master, origin/main)
+- Pull all repositories from origin/<DEFAULT_BRANCH> (e.g. origin/master, origin/main)
 
   ```
     > node github/pull_repositories.js --target <PATH>
