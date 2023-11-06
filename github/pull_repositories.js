@@ -64,7 +64,7 @@ if (require.main === module) {
   // Code section that will run only if current file is the entry point.
   program
     .description(
-      'Script to update all repositories from origin/master if master is the current branch',
+      'Script to update all repositories from origin/<default_branch> when default_branch is the one currently checked',
     )
     .requiredOption(
       '-t, --target <target>',
